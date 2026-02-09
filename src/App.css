@@ -314,6 +314,12 @@ h1,
   font-size: 0.85rem;
 }
 
+.credit-link {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

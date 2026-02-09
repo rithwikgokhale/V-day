@@ -556,7 +556,13 @@ function App() {
           {toastMessage}
         </div>
       )}
-      <p className="credit">Made with love by {config.myName}</p>
+      <p className="credit">
+        Made with{' '}
+        <a className="credit-link" href={`${BASE_URL}decode.html`}>
+          love
+        </a>{' '}
+        by {config.myName}
+      </p>
     </main>
   )
 }
