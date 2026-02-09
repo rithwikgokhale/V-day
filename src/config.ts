@@ -3,6 +3,7 @@ export type ImageOption = {
   filename: string
   label: string
   alt: string
+  imageOrientation?: 'from-image' | 'none'
 }
 
 export const config = {
@@ -57,12 +58,14 @@ export const config = {
       filename: 'IMG_9504.JPG',
       label: '',
       alt: 'Photo 6',
+      imageOrientation: 'none',
     },
     {
       id: 'pic-10',
       filename: 'IMG_9508.JPG',
       label: '',
       alt: 'Photo 10',
+      imageOrientation: 'none',
     },
     {
       id: 'pic-13',

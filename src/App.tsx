@@ -400,6 +400,7 @@ function App() {
                     <img
                       src={`${BASE_URL}pics/${image.filename}`}
                       alt={image.alt}
+                      style={{ imageOrientation: image.imageOrientation ?? 'from-image' }}
                       onError={(event) => {
                         event.currentTarget.src = `${BASE_URL}us/fallback.svg`
                       }}
