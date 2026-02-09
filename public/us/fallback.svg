@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
+  <title id="title">Fallback image</title>
+  <desc id="desc">A soft gradient placeholder card with heart icon.</desc>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd9e8"/>
+      <stop offset="100%" stop-color="#ffeef6"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="600" fill="url(#g)" />
+  <text x="450" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="82" fill="#d85b93">LOVE</text>
+  <text x="450" y="350" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" fill="#8f4a69">Photo Missing</text>
+</svg>
