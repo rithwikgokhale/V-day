@@ -95,7 +95,7 @@ export const config = {
     'Ana,\n\nThis is where your personal message goes. Replace this in src/config.ts when you are ready. I wanted this page to feel simple and sincere, just like us.\n\n- Rithwik',
   screen5Message: 'Yay! ❤️ I’ll text you the plan for the date.',
   yesButtonTexts: ['Yes', 'Yes!', 'OK YES', 'Okay YESSSS!! :)'],
-  myEmail: 'your-email@example.com',
+  myEmail: 'rithwikg3@gmail.com',
   emailSubject: 'Valentine Answer',
   emailIntroLine: 'Hey! I selected my top 3 photos. Sending this for your surprise.',
   theme: {
