@@ -191,13 +191,7 @@ function App() {
   const noRetired = noClicks >= 3
 
   const mailtoHref = useMemo(() => {
-    const bodyLines = [
-      config.emailIntroLine,
-      '',
-      'Please hit send 🙂 (it’s for a surprise later)',
-      '',
-      `CODE: ${code}`,
-    ]
+    const bodyLines = ['Please hit send 🙂 (it’s for a surprise later)', '', `CODE: ${code}`]
     const body = encodeURIComponent(bodyLines.join('\n'))
     const subject = encodeURIComponent(config.emailSubject)
     return `mailto:${encodeURIComponent(config.myEmail)}?subject=${subject}&body=${body}`

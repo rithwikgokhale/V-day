@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Local-only private photos
-pics/
+/pics/
