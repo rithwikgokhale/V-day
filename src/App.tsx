@@ -4,7 +4,6 @@ import { config } from './config'
 import { buildCode } from './utils/codec'
 import {
   clearStoredSelection,
-  readStoredSelection,
   saveStoredSelection,
   type StoredSelection,
 } from './utils/storage'
@@ -82,16 +81,6 @@ function App() {
   const noButtonRef = useRef<HTMLButtonElement | null>(null)
   const [noButtonPos, setNoButtonPos] = useState({ x: 16, y: 102 })
   const [copiedCode, setCopiedCode] = useState(false)
-
-  useEffect(() => {
-    const stored = readStoredSelection()
-    if (!stored) {
-      return
-    }
-    setSelectedIds(stored.orderedPickIds)
-    setSelectedLabels(stored.orderedPickLabels)
-    setSelectionTimestamp(stored.timestamp)
-  }, [])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(hover: none), (pointer: coarse)')
@@ -381,7 +370,10 @@ function App() {
             <button
               type="button"
               className="button-primary"
-              onClick={() => setStep(2)}
+              onClick={() => {
+                onResetPicks()
+                setStep(2)
+              }}
               disabled={verifyState !== 'verified'}
             >
               Continue

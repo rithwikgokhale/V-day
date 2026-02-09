@@ -149,8 +149,10 @@ a:focus-visible {
 
 .image-tile img {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
+  height: clamp(170px, 27vw, 255px);
+  object-fit: contain;
+  image-orientation: from-image;
+  background: #fff7fb;
   border-radius: 10px;
   display: block;
 }
