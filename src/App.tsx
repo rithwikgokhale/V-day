@@ -404,7 +404,7 @@ function App() {
                         event.currentTarget.src = `${BASE_URL}us/fallback.svg`
                       }}
                     />
-                    <span className="image-label">{image.label}</span>
+                    {image.label.trim() && <span className="image-label">{image.label}</span>}
                     {selectionNumber > 0 && <span className="badge">{selectionNumber}</span>}
                   </button>
                 )
@@ -454,6 +454,7 @@ function App() {
           <>
             <h1>Will you be my Valentine?</h1>
             <p className="lead">Think carefully. One option gets cuter every time.</p>
+            <p className="tiny-note">See what happens when you try to click NO 😏</p>
             <div
               className="dodge-area"
               ref={dodgeContainerRef}
@@ -546,7 +547,6 @@ function App() {
                 Restart
               </button>
             </div>
-            <p className="code-line">CODE: {code}</p>
           </>
         )}
       </section>
