@@ -11,6 +11,7 @@
 }
 
 .card {
+  position: relative;
   width: min(920px, 100%);
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -238,37 +239,39 @@ a:focus-visible {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: hidden;
+  z-index: 4;
 }
 
-.burst span {
+.burst-particle {
   position: absolute;
-  font-size: 1.65rem;
-  animation: pop 0.95s ease forwards;
+  font-size: calc(1rem * var(--particle-size));
+  animation: burst-pop var(--particle-duration) ease-out forwards;
 }
 
-.burst span:nth-child(1) {
-  left: 17%;
-  top: 45%;
+.heart-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.burst span:nth-child(2) {
-  left: 35%;
-  top: 58%;
+.heart-drop {
+  position: absolute;
+  top: -12%;
+  font-size: calc(1rem * var(--heart-size));
+  animation: heart-fall var(--heart-duration) ease-in forwards;
+  animation-delay: var(--heart-delay);
+  opacity: 0;
 }
 
-.burst span:nth-child(3) {
-  left: 51%;
-  top: 35%;
-}
-
-.burst span:nth-child(4) {
-  left: 67%;
-  top: 59%;
-}
-
-.burst span:nth-child(5) {
-  left: 79%;
-  top: 42%;
+.final-actions,
+.code-line,
+h1,
+.lead {
+  position: relative;
+  z-index: 2;
 }
 
 .send-link {
@@ -316,7 +319,7 @@ a:focus-visible {
   }
 }
 
-@keyframes pop {
+@keyframes burst-pop {
   0% {
     transform: translateY(0) scale(0.7);
     opacity: 0;
@@ -327,7 +330,23 @@ a:focus-visible {
   }
 
   100% {
-    transform: translateY(-48px) scale(1.2);
+    transform: translateY(-72px) scale(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes heart-fall {
+  0% {
+    transform: translateY(-10%) scale(0.85);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translateY(118%) scale(1.06);
     opacity: 0;
   }
 }

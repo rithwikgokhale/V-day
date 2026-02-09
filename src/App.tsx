@@ -11,13 +11,52 @@ import {
 
 type Step = 1 | 2 | 3 | 4 | 5
 type VerifyState = 'idle' | 'verifying' | 'verified'
+type BurstParticle = {
+  id: number
+  emoji: string
+  x: number
+  y: number
+  size: number
+  duration: number
+}
+type HeartParticle = {
+  id: number
+  x: number
+  size: number
+  duration: number
+  delay: number
+}
 
 const DODGE_DISTANCE = 80
 const MOBILE_DODGE_ATTEMPTS = 5
 const DESKTOP_DODGE_MS = 5000
+const CELEBRATION_DURATION_MS = 1900
+const BASE_URL = import.meta.env.BASE_URL
 
 function getLabelsForIds(ids: string[]): string[] {
   return ids.map((id) => config.images.find((image) => image.id === id)?.label ?? id)
+}
+
+function createBurstParticles(phase: number): BurstParticle[] {
+  const phaseEmojis =
+    phase === 0
+      ? ['💘', '✨', '🎉', '💖', '🌸', '🥰', '🎊']
+      : phase === 1
+        ? ['💖', '💘', '❤️', '💕', '✨']
+        : ['❤️']
+
+  const count = phase === 0 ? 22 : phase === 1 ? 26 : 32
+  return Array.from({ length: count }, (_, index) => {
+    const emoji = phaseEmojis[Math.floor(Math.random() * phaseEmojis.length)]
+    return {
+      id: Date.now() + phase * 100 + index,
+      emoji,
+      x: 6 + Math.random() * 88,
+      y: 10 + Math.random() * 75,
+      size: 1.15 + Math.random() * 1.2,
+      duration: 1400 + Math.random() * 1000,
+    }
+  })
 }
 
 function App() {
@@ -35,6 +74,9 @@ function App() {
   const [mobileNoAttempts, setMobileNoAttempts] = useState(0)
   const [desktopDodgingActive, setDesktopDodgingActive] = useState(false)
   const [celebrate, setCelebrate] = useState(false)
+  const [celebrationPhase, setCelebrationPhase] = useState(0)
+  const [burstParticles, setBurstParticles] = useState<BurstParticle[]>([])
+  const [heartRain, setHeartRain] = useState<HeartParticle[]>([])
 
   const dodgeContainerRef = useRef<HTMLDivElement | null>(null)
   const noButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -76,6 +118,54 @@ function App() {
     const timer = window.setTimeout(() => setToastMessage(''), 1500)
     return () => window.clearTimeout(timer)
   }, [toastMessage])
+
+  useEffect(() => {
+    if (!celebrate) {
+      setBurstParticles([])
+      return
+    }
+    setBurstParticles(createBurstParticles(celebrationPhase))
+  }, [celebrationPhase, celebrate])
+
+  useEffect(() => {
+    if (step !== 5) {
+      setHeartRain([])
+      return
+    }
+
+    let cancelled = false
+    const start = Date.now()
+    let idCounter = 0
+
+    const spawnHearts = () => {
+      if (cancelled) {
+        return
+      }
+
+      const elapsed = Date.now() - start
+      const progress = Math.min(elapsed / 2600, 1)
+      const heartsPerWave = progress > 0.8 ? 3 : progress > 0.45 ? 2 : 1
+      const nextHearts = Array.from({ length: heartsPerWave }, () => ({
+        id: idCounter++,
+        x: 4 + Math.random() * 92,
+        size: 0.85 + Math.random() * 1.2,
+        duration: 1600 + Math.random() * 1200,
+        delay: Math.random() * 180,
+      }))
+
+      setHeartRain((previous) => [...previous.slice(-120), ...nextHearts])
+
+      if (elapsed < 3200) {
+        const delay = Math.max(65, 220 - progress * 150)
+        window.setTimeout(spawnHearts, delay)
+      }
+    }
+
+    spawnHearts()
+    return () => {
+      cancelled = true
+    }
+  }, [step])
 
   const orderedSelection: StoredSelection = useMemo(
     () => ({
@@ -201,10 +291,14 @@ function App() {
 
   function onYesClick(): void {
     setCelebrate(true)
+    setCelebrationPhase(0)
+
+    window.setTimeout(() => setCelebrationPhase(1), 600)
+    window.setTimeout(() => setCelebrationPhase(2), 1250)
     window.setTimeout(() => {
       setCelebrate(false)
       setStep(5)
-    }, 1000)
+    }, CELEBRATION_DURATION_MS)
   }
 
   async function onCopyCode(): Promise<void> {
@@ -229,6 +323,9 @@ function App() {
     setMobileNoAttempts(0)
     setDesktopDodgingActive(false)
     setCelebrate(false)
+    setCelebrationPhase(0)
+    setBurstParticles([])
+    setHeartRain([])
     setNoButtonPos({ x: 16, y: 102 })
   }
 
@@ -237,6 +334,8 @@ function App() {
     setMobileNoAttempts(0)
     setDesktopDodgingActive(false)
     setCelebrate(false)
+    setCelebrationPhase(0)
+    setBurstParticles([])
     setNoButtonPos({ x: 16, y: 102 })
   }
 
@@ -313,10 +412,10 @@ function App() {
                     aria-pressed={selectionNumber > 0}
                   >
                     <img
-                      src={`/us/${image.filename}`}
+                      src={`${BASE_URL}pics/${image.filename}`}
                       alt={image.alt}
                       onError={(event) => {
-                        event.currentTarget.src = '/us/fallback.svg'
+                        event.currentTarget.src = `${BASE_URL}us/fallback.svg`
                       }}
                     />
                     <span className="image-label">{image.label}</span>
@@ -407,11 +506,22 @@ function App() {
             )}
             {celebrate && (
               <div className="burst" aria-hidden="true">
-                <span>💘</span>
-                <span>✨</span>
-                <span>🎉</span>
-                <span>💖</span>
-                <span>🌸</span>
+                {burstParticles.map((particle) => (
+                  <span
+                    key={particle.id}
+                    className="burst-particle"
+                    style={
+                      {
+                        left: `${particle.x}%`,
+                        top: `${particle.y}%`,
+                        '--particle-size': particle.size,
+                        '--particle-duration': `${particle.duration}ms`,
+                      } as CSSProperties
+                    }
+                  >
+                    {particle.emoji}
+                  </span>
+                ))}
               </div>
             )}
           </>
@@ -419,6 +529,24 @@ function App() {
 
         {step === 5 && (
           <>
+            <div className="heart-rain" aria-hidden="true">
+              {heartRain.map((heart) => (
+                <span
+                  key={heart.id}
+                  className="heart-drop"
+                  style={
+                    {
+                      left: `${heart.x}%`,
+                      '--heart-size': heart.size,
+                      '--heart-duration': `${heart.duration}ms`,
+                      '--heart-delay': `${heart.delay}ms`,
+                    } as CSSProperties
+                  }
+                >
+                  ❤️
+                </span>
+              ))}
+            </div>
             <h1>{config.screen5Message}</h1>
             <p className="lead">Please hit send 🙂 (it’s for a surprise later)</p>
             <div className="final-actions">
